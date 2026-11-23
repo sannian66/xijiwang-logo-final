@@ -187,7 +187,7 @@
   let raf; const loop = () => { const t = clock(); drive(t); if (t < END) raf = requestAnimationFrame(loop); };
   const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // 逐帧导出：seek(毫秒)
-  window.seek = ms => { cancelAnimationFrame(raf); clear(); LIVE.forEach(a => { a.pause(); a.currentTime = ms; }); bake(); drive(ms); UI.style.display = ms >= UI_END ? 'none' : ''; };
+  window.seek = ms => { clearTimeout(timer); cancelAnimationFrame(raf); clear();   /* v3.3: 逐帧导出时取消实时播放的终帧定时器，避免其在 seek 与截图之间触发造成空白帧 */ LIVE.forEach(a => { a.pause(); a.currentTime = ms; }); bake(); drive(ms); UI.style.display = ms >= UI_END ? 'none' : ''; };
   // 实时播放：结束后定格
   let timer; const arm = () => { clearTimeout(timer); timer = setTimeout(() => { cancelAnimationFrame(raf); drive(END); bake(); UI.style.display = 'none'; }, END); };
   const start = () => { cancelAnimationFrame(raf); if (REDUCE) drive(END); else { drive(0); raf = requestAnimationFrame(loop); } };

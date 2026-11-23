@@ -1,4 +1,4 @@
-# Baked pause->play(nose) morph keyframes for v3.2 (imported by build31.py).
+# Baked pause->play(nose) morph keyframes, v3.3 (imported by build33.py). Geometry identical to v3.2; easing selectable via MORPH_EASE.
 # Two halves; seam corners always lie on the common top/bottom silhouette line, so no kink or hairline.
 import numpy as np
 def bez(x1,y1,x2,y2):
@@ -12,6 +12,9 @@ def bez(x1,y1,x2,y2):
         return 3*(1-s)**2*s*y1+3*(1-s)*s**2*y2+s**3
     return f
 emph=bez(.2,0,0,1)
+import os
+EASES={'emph':(.2,0,0,1),'soft':(.4,0,.2,1)}
+mease=bez(*EASES[os.environ.get('MORPH_EASE','emph')])
 L=lambda a,b,p: a+(b-a)*p
 def fmt(v): return ('%.4f'%v).rstrip('0').rstrip('.').replace('-0','-0') if abs(v)>5e-4 else '0'
 def P(*pts): return ' '.join(fmt(v) for v in pts)
@@ -50,7 +53,7 @@ def jsdata(n=60):
     import json
     L_=[];R_=[]
     for k in range(n+1):
-        l,r=shapes(emph(k/n)); L_.append(l); R_.append(r)
+        l,r=shapes(mease(k/n)); L_.append(l); R_.append(r)
     return json.dumps({'L':L_,'R':R_})
 if __name__=='__main__':
     for p in (0,1): print(shapes(p))
