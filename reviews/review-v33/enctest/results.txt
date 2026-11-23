@@ -1,0 +1,9 @@
+anim_src_dark.mp4        out-of-range max 0.1350%  Ymin 11 Ymax 232
+anim_src_light.mp4       out-of-range max 0.1287%  Ymin 43 Ymax 239
+base_src_dark.mp4        out-of-range max 0.1483%  Ymin 11 Ymax 232
+base_src_light.mp4       out-of-range max 0.1395%  Ymin 41 Ymax 240
+crf8_src_dark.mp4        out-of-range max 0.1080%  Ymin 13 Ymax 231
+crf8_src_light.mp4       out-of-range max 0.1144%  Ymin 44 Ymax 239
+lossless_dark.mp4        out-of-range max 0.0000%  Ymin 16 Ymax 227
+psy0_src_dark.mp4        out-of-range max 0.1630%  Ymin 10 Ymax 232
+psy0_src_light.mp4       out-of-range max 0.1615%  Ymin 41 Ymax 240

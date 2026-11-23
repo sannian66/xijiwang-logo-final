@@ -1,0 +1,6 @@
+ 10%  visual 1.557s  audio pitch 1.567s  audio lag +11 ms
+ 25%  visual 1.603s  audio pitch 1.646s  audio lag +42 ms
+ 50%  visual 1.660s  audio pitch 1.750s  audio lag +90 ms
+ 75%  visual 1.738s  audio pitch 1.854s  audio lag +116 ms
+ 90%  visual 1.830s  audio pitch 1.933s  audio lag +103 ms
+max |aud-vis| = 0.280 at t=1.729

@@ -1,0 +1,16 @@
+l 132 peak ring alpha below chin 0.959, px>3%: 2569
+l 133 peak ring alpha below chin 0.676, px>3%: 2420
+l 134 peak ring alpha below chin 0.333, px>3%: 2219
+l 135 peak ring alpha below chin 0.169, px>3%: 2036
+l 136 peak ring alpha below chin 0.064, px>3%: 1713
+l 137 peak ring alpha below chin 0.027, px>3%: 0
+l 138 peak ring alpha below chin 0.000, px>3%: 0
+l 139 peak ring alpha below chin 0.000, px>3%: 0
+d 132 peak ring alpha below chin 0.992, px>3%: 2550
+d 133 peak ring alpha below chin 0.669, px>3%: 2383
+d 134 peak ring alpha below chin 0.335, px>3%: 2205
+d 135 peak ring alpha below chin 0.167, px>3%: 2030
+d 136 peak ring alpha below chin 0.061, px>3%: 1686
+d 137 peak ring alpha below chin 0.024, px>3%: 0
+d 138 peak ring alpha below chin 0.000, px>3%: 0
+d 139 peak ring alpha below chin 0.000, px>3%: 0
