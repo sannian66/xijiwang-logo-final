@@ -1,0 +1,14 @@
+l f194->f195 max 130 mean 0.030 px>32 1389
+l f195->f196 max 136 mean 0.029 px>32 1329
+l f196->f197 max 134 mean 0.025 px>32 1157
+l f197->f198 max 116 mean 0.024 px>32 1125
+l f198->f199 max 222 mean 0.085 px>32 2614
+l f199->f200 max 230 mean 0.274 px>32 5868
+l f200->f201 max 235 mean 0.526 px>32 10162
+d f194->f195 max 143 mean 0.032 px>32 1500
+d f195->f196 max 164 mean 0.032 px>32 1437
+d f196->f197 max 151 mean 0.028 px>32 1272
+d f197->f198 max 133 mean 0.027 px>32 1254
+d f198->f199 max 252 mean 0.095 px>32 2739
+d f199->f200 max 255 mean 0.307 px>32 5954
+d f200->f201 max 255 mean 0.589 px>32 10247

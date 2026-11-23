@@ -1,0 +1,3 @@
+rebuild vs delivered WAV: len 360000 360000 max abs diff 0.0
+wav: sub-150Hz (thump) -6dB onset 2.335s, peak 2.343s
+mp4: sub-150Hz (thump) -6dB onset 2.335s, peak 2.343s

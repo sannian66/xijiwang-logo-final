@@ -1,0 +1,11 @@
+true contour -> radial polygon: max 0.271 u, p99 0.251, mean 0.1131
+points >0.3u: 0 of 20000
+backtracking steps 0
+polygon seg len u: max 1.240 mean 0.882
+mane R about nose: min 71.7 (at 51 deg) max 123.6 (at -92 deg)
+f131: rc 81.4u  m 0.809  contour-minus-mane offset (1-m)(rc-R): all [-8.06,+1.84]u, 20-70deg [-1.49,+1.84]u; outline half-width 1.12u, mask half-width 0.00u
+f132: rc 82.5u  m 0.840  contour-minus-mane offset (1-m)(rc-R): all [-6.58,+1.73]u, 20-70deg [-1.07,+1.73]u; outline half-width 1.14u, mask half-width 2.28u
+f133: rc 83.6u  m 0.866  contour-minus-mane offset (1-m)(rc-R): all [-5.36,+1.59]u, 20-70deg [-0.75,+1.59]u; outline half-width 1.15u, mask half-width 2.31u
+f134: rc 84.6u  m 0.889  contour-minus-mane offset (1-m)(rc-R): all [-4.33,+1.43]u, 20-70deg [-0.51,+1.43]u; outline half-width 1.17u, mask half-width 2.33u
+f135: rc 85.5u  m 0.909  contour-minus-mane offset (1-m)(rc-R): all [-3.47,+1.25]u, 20-70deg [-0.34,+1.25]u; outline half-width 1.18u, mask half-width 2.36u
+f136: rc 86.3u  m 0.926  contour-minus-mane offset (1-m)(rc-R): all [-2.76,+1.08]u, 20-70deg [-0.21,+1.08]u; outline half-width 1.19u, mask half-width 2.38u

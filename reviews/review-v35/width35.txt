@@ -1,0 +1,44 @@
+== l
+f126 band~  4.41px area    14004
+f127 band~  4.36px area    13814  width x0.988
+f128 band~  4.32px area    13555  width x0.990
+f129 band~  4.25px area    13190  width x0.985
+f130 band~  4.20px area    12839  width x0.988
+f131 band~  4.15px area    12471  width x0.989
+f132 band~  6.85px area    21416  width x1.649
+f133 band~  7.17px area    21802  width x1.048
+f134 band~  8.26px area    24109  width x1.152
+f135 band~  9.73px area    26823  width x1.177
+f136 band~ 11.83px area    31668  width x1.216
+f137 band~ 15.05px area    39061  width x1.272
+f138 band~ 19.60px area    49038  width x1.303
+f139 band~ 25.53px area    61311  width x1.303
+f140 band~ 32.79px area    75275  width x1.284
+f141 band~ 39.72px area    90627  width x1.211
+f142 band~ 46.30px area   100505  width x1.166
+f143 band~ 48.52px area   102049  width x1.048
+f144 band~ 48.51px area   100736  width x1.000
+f145 band~ 48.27px area    97899  width x0.995
+f146 band~ 47.30px area    94607  width x0.980
+== d
+f126 band~  4.42px area    14022
+f127 band~  4.36px area    13834  width x0.987
+f128 band~  4.32px area    13557  width x0.990
+f129 band~  4.25px area    13213  width x0.986
+f130 band~  4.21px area    12855  width x0.990
+f131 band~  4.16px area    12479  width x0.987
+f132 band~  6.87px area    21442  width x1.652
+f133 band~  7.19px area    21821  width x1.047
+f134 band~  8.28px area    24126  width x1.151
+f135 band~  9.74px area    26837  width x1.177
+f136 band~ 11.84px area    31698  width x1.215
+f137 band~ 15.05px area    39065  width x1.271
+f138 band~ 19.60px area    49047  width x1.303
+f139 band~ 25.54px area    61330  width x1.303
+f140 band~ 32.76px area    75287  width x1.283
+f141 band~ 39.73px area    90645  width x1.213
+f142 band~ 46.30px area   100512  width x1.165
+f143 band~ 48.53px area   102059  width x1.048
+f144 band~ 48.52px area   100743  width x1.000
+f145 band~ 48.22px area    97907  width x0.994
+f146 band~ 47.31px area    94614  width x0.981

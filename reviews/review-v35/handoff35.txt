@@ -1,0 +1,32 @@
+== l
+f112 nose(1256.7,749.8) bbox x1010-1559 y476-1024 area     13358 width~ 6.16px
+f113 nose(1258.3,749.7) bbox x1010-1559 y476-1024 area     13360 width~ 6.16px  dArea +0.01%
+f114 nose(1259.3,749.8) bbox x1010-1559 y476-1024 area     13361 width~ 6.16px  dArea +0.01%
+f115 nose(1260.7,749.7) bbox x1010-1559 y476-1024 area     13402 width~ 6.18px  dArea +0.31%
+f116 nose(1261.3,749.8) bbox x1011-1559 y476-1024 area     13407 width~ 6.18px  dArea +0.04%
+f117 nose(1261.9,749.7) bbox x1011-1559 y476-1024 area     12710 width~ 5.87px  dArea -5.20%
+f118 nose(1262.8,749.8) bbox x1011-1559 y476-1024 area     12622 width~ 5.82px  dArea -0.69%
+f119 nose(1263.7,749.7) bbox x1011-1559 y476-1024 area     12683 width~ 5.85px  dArea +0.48%
+f120 nose(1264.3,749.8) bbox x1011-1558 y476-1023 area     12672 width~ 5.85px  dArea -0.09%
+f121 nose(1264.8,749.8) bbox x1010-1559 y474-1023 area     12693 width~ 5.85px  dArea +0.16%
+f122 nose(1265.8,749.8) bbox x1005-1563 y461-1025 area     12914 width~ 5.82px  dArea +1.74%
+f123 nose(1266.5,749.8) bbox x993-1571 y437-1026 area     13419 width~ 5.81px  dArea +3.91%
+f124 nose(1267.1,749.8) bbox x978-1582 y413-1027 area     13887 width~ 5.76px  dArea +3.49%
+f125 nose(1267.8,749.7) bbox x968-1589 y398-1024 area     14039 width~ 5.68px  dArea +1.09%
+f126 nose(1268.8,749.7) bbox x964-1592 y390-1020 area     14004 width~ 5.62px  dArea -0.24%
+== d
+f112 nose(1256.7,749.8) bbox x1011-1559 y476-1024 area     13283 width~ 6.13px
+f113 nose(1258.3,749.7) bbox x1011-1559 y476-1024 area     13284 width~ 6.13px  dArea +0.00%
+f114 nose(1259.3,749.8) bbox x1011-1559 y476-1024 area     13284 width~ 6.13px  dArea +0.00%
+f115 nose(1260.7,749.7) bbox x1011-1559 y476-1024 area     13320 width~ 6.14px  dArea +0.27%
+f116 nose(1261.3,749.8) bbox x1011-1559 y476-1024 area     13362 width~ 6.16px  dArea +0.32%
+f117 nose(1261.9,749.7) bbox x1011-1559 y476-1024 area     12726 width~ 5.87px  dArea -4.76%
+f118 nose(1262.8,749.8) bbox x1011-1559 y476-1024 area     12642 width~ 5.83px  dArea -0.66%
+f119 nose(1263.7,749.7) bbox x1011-1559 y476-1024 area     12680 width~ 5.85px  dArea +0.30%
+f120 nose(1264.3,749.8) bbox x1011-1558 y476-1023 area     12691 width~ 5.86px  dArea +0.09%
+f121 nose(1264.8,749.8) bbox x1010-1559 y473-1023 area     12711 width~ 5.85px  dArea +0.16%
+f122 nose(1265.8,749.8) bbox x1005-1563 y461-1025 area     12927 width~ 5.83px  dArea +1.70%
+f123 nose(1266.5,749.8) bbox x993-1571 y437-1026 area     13414 width~ 5.80px  dArea +3.76%
+f124 nose(1267.1,749.8) bbox x978-1582 y413-1027 area     13883 width~ 5.75px  dArea +3.50%
+f125 nose(1267.7,749.7) bbox x968-1589 y398-1024 area     14068 width~ 5.69px  dArea +1.33%
+f126 nose(1268.9,749.7) bbox x964-1592 y390-1019 area     14022 width~ 5.63px  dArea -0.32%

@@ -1,0 +1,2 @@
+xijiwang-logo-v3.5-play-2K-60fps-light.mp4 outside16-235: max 0.210% mean 0.130% | outside5-246: max 0.0002% frames>0 139
+xijiwang-logo-v3.5-play-2K-60fps-dark.mp4 outside16-235: max 0.167% mean 0.100% | outside5-246: max 0.0004% frames>0 123

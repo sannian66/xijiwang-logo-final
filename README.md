@@ -79,3 +79,14 @@ ffmpeg -framerate 60 -i 帧/f%04d.png -i sfx.wav \
   - P2-1(c) 可选：环 2.05–2.20s 放大并上移贴合鬃毛（违背"环心=鼻心"，需拍板）。
   - P3：滑音改用与画面同一 bez(.4,0,.2,1)；▶ 光学偏左 2.2 单位。
 - 构建：`cd source/anim && python3 build34.py template34.html v34.html && python3 sfx34.py sfx34.wav 7.5 && bash run34.sh v34.html v34 7.5 && bash enc34.sh v34l sfx34.wav light.mp4 450`
+
+## 10. v3.5 更新（20:30）— 圆环→鬃毛连续变形，独立审稿 8.4，无 P1
+客户反馈：v3.4 "播放圆圈变成狮子外圈时有点突兀"（圆环淡出 + 狮子 .72 缩放弹入，圆心在鼻子、鬃毛中心更高，两形错位硬叠）。
+- 2.00s 圆环硬切交接给 lion 坐标系的 `.outline`，几何/线宽逐帧一致（f119→f120 墨迹面积差 −0.09%）。
+- 2.00–2.45s：以鼻心 (131.5,147) 为极点，圆按角度径向插值成鬃毛外轮廓（`mane35.py` 720 采样；轮廓对鼻心星形，无交叉），emph。
+- 2.20–2.90s：`#thick` 遮罩描边宽 w0→220（cubic(.4,0,.1,1)），轮廓线向内加粗成实心鬃毛；变形未完成（m<.96）时 `.reveal` 以 `#olFill`（当前轮廓）为填充外缘，杜绝白缝；遮罩随变形中的轮廓更新。
+- 五官 `.feat` 2.40s fadeIn .14s；thump 2.33s；滑音音高曲线 = 画面 bez(.4,0,.2,1)。
+- 审稿 reviews/review-v35/：8.4（概念 8.5、工艺 8.1、节奏 8.2、品牌 9.0、声音 8.5、明暗 9.0）。审稿后已修 P2-1（线宽 ×1.65 突跳、右下白缝）、P3-1（加粗缓动）、P3-2（五官灰帧缩短）、P3-6（注释）；复核：线宽逐帧平滑、无白缝，末帧与源 SVG 差 0，build35.py 默认参数可逐字节复现。
+- 规格：2560×1440、60fps、450 帧、bt709 tv、−16.0 LUFS、−2.6 dBTP。
+- 构建：`cd source/anim && python3 build35.py template35.html v35.html && python3 sfx35.py sfx35.wav 7.5 && bash run35.sh v35.html v35 7.5 && bash enc35.sh v35l sfx35.wav light.mp4 450`
+- v3.6 候选：P3-3 变形前段偏急（HD 450→550，需复查 olFill 与加粗带重叠）；P3-4 2.02–2.12s 轻 shimmer；P3-5 ▶ 光学偏移（CX 同步改 129.3）。

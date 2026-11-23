@@ -1,0 +1,4 @@
+html_vs_src_light: max 0, px>0 0, px>8 0, px>32 0, mean 0.0000
+html_vs_src_dark: max 0, px>0 0, px>8 0, px>32 0, mean 0.0000
+mp4_vs_src_light: max 14, px>0 140040, px>8 104, px>32 0, mean 0.0519
+mp4_vs_src_dark: max 15, px>0 140879, px>8 81, px>32 0, mean 0.0501
