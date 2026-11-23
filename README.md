@@ -1,0 +1,60 @@
+# 西几王传媒 / XIJIWANG MEDIA Logo 动画 — 交接文档
+
+更新：2026-11-23 19:10 (UTC+8)
+
+## 1. 项目目标
+用代码（SVG + CSS/JS）做狮子 logo 的品牌开场动画。风格：克制、高级、Apple/Google 感；Material 3 emphasized + ease-out-expo；不要旋转/弹跳/扫光等噱头。
+交付规格：2560×1440、60fps、带音效；音频 −16 LUFS，True Peak ≤ −1.5 dBTP；bt709 limited range 编码（纯白解码 255）。
+铁律：旧版本文件永不修改，每个新版本都用新文件名。
+
+## 2. 最终版本（deliverables/）
+| 版本 | 概念 | 独立审稿分数 | 文件 |
+|---|---|---|---|
+| **v4.2 光圈** | 8 片光圈叶片打开成狮脸，鼻子 ▶/❚❚ 可切换，下划线 = 进度条 | 5.5 → 7.8 → **8.2** | `xijiwang-logo-v4.2-aperture-intro-2K-60fps.mp4`、`-playpause-demo-2K-60fps.mp4`、`-interactive.html`、`-sfx.wav` |
+| **v5.6 XJW** | 字母 X/J/W 变形成五官，▶ 按入左眼，鬃毛生长 | 6.2 → 6.8 → 7.4 → 8.0 → **8.4** | `xijiwang-logo-v5.6-xjw-intro-2K-60fps.mp4`（5.4s）、`-playpause-demo-2K-60fps.mp4`（14.2s）、`-interactive.html`、`-sfx.wav` |
+| **v3.x 播放键** | ❚❚ → 光标点击 → 变 ▶ → ▶ 成为狮子鼻子 → 镜头拉远、狮子圆形展开 → 字标 | v3 5.2 → v3.1 7.0 → v3.2 **7.8**（无 P1）→ v3.3 进行中 | `xijiwang-logo-v3.2-play-2K-60fps-{light,dark}.mp4`、`-play.html`、`-sfx.wav`（v3.1 也在） |
+| 头像 | 1:1 白底，图标约占 66% | — | `xijiwang-avatar-v4.2.svg/-1024.png`、`xijiwang-avatar-v5.6.svg/-1024.png` |
+
+用户已确认最终版只要 v4.2 和 v5.6（v3 系列是后加的迭代任务）。
+已弃用：v4.1（径向同步光圈，无旋转）——用户明确否决，不要再用这个方向。
+
+## 3. 进行中的工作：v3 迭代
+- 目标：独立审稿 ≥ 8.2 且无 P1。
+- v3.2 审稿（reviews/review-v32i/REVIEW.md）剩余问题：
+  - P2-1：2.38–2.43s 有约 3 帧只见五官、不见头部 → 揭示圆起始半径 R0≈86 + .reveal 0.1s 淡入。
+  - P2-2：揭示太快像"弹出" → 改 cubic(.05,.7,.1,1)，时长约 900ms。
+  - P3：2.10–2.37s 空档（G0≈2200，按钮切换≈2.20s，圆环消失≈2.10，thump≈2.21）；亮度超范围（编码加 `lutyuv=y='clip(val,16,235)'`）；❚❚→▶ 变形加长到约 0.6s。
+- v3.3 已在构建中（template33.html 等）；若仓库里没有 v3.3 文件，说明构建未完成，请从 template32.html 复制出 v3.3 按上面修复，渲染后再找独立审稿人打分。
+
+## 4. 源码（source/）
+- `source/anim/`：
+  - 渲染器：`python3 render3.py <html> <帧目录> <"#dark"|""> 60 <时长秒> 2560`（playwright 逐帧 seek）。
+  - v3.2：`template32.html` + `build32.py` + `morph32.py`（预计算变形关键帧）+ `sfx32.py`，脚本 `run32.sh` / `enc32.sh`。
+  - v4.2：`template42.html` + `build42.py` + `sfx42.py`，`run8.sh`。
+  - v5.6：`template56.html` + `build56.py`（读取 `v5src.svg`，N=360）+ `sfx56.py`，`run9.sh`。
+  - 旧版本 template2/3/4/5/51… 以及对应 build/sfx 均保留。
+- `source/avatar/mk.py`：头像生成。
+- `assets/`：用户上传的原始 logo SVG（横版主 logo，#202624；v5 用的新版 #000 墨色）。
+
+环境：`pip install svgpathtools playwright && playwright install chromium`；需要 ffmpeg、ImageMagick。
+
+## 5. 编码命令（标准）
+```
+ffmpeg -framerate 60 -i 帧/f%04d.png -i sfx.wav \
+ -vf scale=out_color_matrix=bt709:out_range=tv,format=yuv420p \
+ -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv \
+ -bsf:v h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1:video_full_range_flag=0 \
+ -c:v libx264 -preset slow -crf 12 -c:a aac -b:a 320k out.mp4
+```
+音频验证：`ffmpeg -i x.wav -af ebur128=peak=true -f null -`
+
+## 6. 坑点
+- 带 SVG transform 属性的元素需 `transform-box: view-box; transform-origin: 0 0`，否则 Chrome 会偏移。
+- 动画时间一改，对应音效事件时间必须同步改。
+- CSS `d: path()` Safari 不支持 → v3.2 起用 JS setAttribute('d') 驱动。
+- `animation-fill-mode: both` 会回填初始帧，曾导致 v3 入场动画失效，用 `forwards`。
+- 结尾把动画元素切换回原始路径，可让最后一帧与源 SVG 像素级一致。
+- 用户永远要 60fps；回复用中文。
+
+## 7. 工作流
+每版：改新文件 → 渲染亮/暗 → 编码 → 由**未参与制作**的独立审稿人打分（/10，分项：概念、工艺、节奏缓动、品牌还原、声音、明暗一致）→ 按 P1/P2/P3 修 → 新版本，循环至达标。审稿报告在 `reviews/`。

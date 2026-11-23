@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>西几王传媒 · Logo Motion v3.1</title>
+<style>
+  /* 缓动：Material 3 Emphasized + Apple ease-out-expo，无回弹 */
+  :root {
+    --ink: #202624; --bg: #ffffff;
+    --emph:  cubic-bezier(.2, 0, 0, 1);
+    --decel: cubic-bezier(.05, .7, .1, 1);
+    --expo:  cubic-bezier(.16, 1, .3, 1);
+    --soft:  cubic-bezier(.4, 0, .2, 1);
+  }
+  body.dark { --ink: #f5f5f7; --bg: #000000; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { background: var(--bg); display: grid; place-items: center; transition: background .5s var(--soft);
+         font-family: -apple-system, "SF Pro Text", "Google Sans", system-ui, sans-serif; }
+  body.capture { transition: none; }
+  .stage { width: min(80vw, 980px); }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  svg * { transform-box: view-box; transform-origin: 0 0; }
+  .ink { fill: var(--ink); }
+
+  /* ── 0 · 暂停按钮（镜头 2.8× 对准鼻子） ── */
+  .cam     { transform-origin: 138.35px 146.3px; animation: cam 1.6s var(--emph) 1.9s both; }
+  .ring    { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 1.02 1.02; stroke-linecap: round;
+             animation: draw .9s var(--soft) 0s both, off .35s var(--soft) 2.92s forwards; }
+  .ringwrap{ animation: ringGrow .7s var(--emph) 1.9s forwards; }
+  .btn     { animation: btnIn .7s var(--decel) .2s both, btnShrink .6s var(--emph) 1.9s forwards, cut .001s linear 2.5s forwards; }
+  .press   { animation: press .32s var(--soft) 1.28s forwards; }
+  .ripple  { fill: var(--ink); opacity: 0; animation: ripple .8s var(--decel) 1.40s forwards; }
+  .barL    { animation: morphL .5s linear 1.45s forwards, cut .001s linear 1.95s forwards; }
+  .barR    { animation: morphR .5s linear 1.45s forwards, cut .001s linear 1.95s forwards; }
+  /* 两半在 1.95s 精确合拢后，硬切为同一几何的整体鼻子路径（无接缝） */
+  .bnose   { opacity: 0; animation: on .001s linear 1.95s forwards; }
+  .cursor  { opacity: 0; animation: cursorIn .7s var(--emph) .55s forwards, cursorOut .35s var(--soft) 1.42s forwards; }
+  .cursor .tap { animation: tap .26s var(--soft) 1.30s forwards; }
+
+  /* ── 1 · 狮子：鼻子硬切 + 圆形遮罩从鼻子展开 ── */
+  .lockup  { animation: center 1.0s var(--emph) 3.3s both; }
+  .nose    { animation: hold0 2.5s linear 0s, cut .001s linear 3.3s forwards; }
+  .reveal  { animation: cut .001s linear 3.3s forwards; }
+  /* 展开完成后换回源 SVG 的原始三条路径（结构与源文件一致） */
+  .lionAll { opacity: 0; animation: on .001s linear 3.3s forwards; }            /* 0–2.5s 隐藏，之后回到基础值（可见） */
+  #growC   { r: 128px; animation: grow .75s var(--emph) 2.52s backwards; }
+
+  /* ── 2 · 字标 ── */
+  .zh { animation: rise .95s var(--expo) calc(3.8s + var(--i) * .065s) both, cut .001s linear 5.02s forwards; }
+  .en { animation: track 1.1s var(--expo) calc(4.15s + var(--i) * .028s) both, cut .001s linear 5.6s forwards; }
+  /* 字标落定后换回源 SVG 的整条路径（与源文件逐像素一致） */
+  .zhAll { opacity: 0; animation: on .001s linear 5.02s forwards; }
+  .enAll { opacity: 0; animation: on .001s linear 5.6s forwards; }
+
+  @keyframes cam      { from { transform: scale(2.8); } to { transform: scale(1); } }
+  @keyframes ringGrow { from { transform: translate(0px, 0px) scale(1); } to { transform: translate(-3.15px, -20.9px) scale(1.6); } }
+  @keyframes btnIn    { from { transform: scale(1.6); opacity: 0; } to { transform: scale(1.9); opacity: 1; } }
+  @keyframes btnShrink{ from { transform: scale(1.9); } to { transform: scale(.9); } }
+  @keyframes press    { 0%,100% { transform: scale(1); } 40% { transform: scale(.92); } }
+  @keyframes ripple   { from { transform: scale(.2); opacity: .12; } to { transform: scale(1); opacity: 0; } }   /* 状态层限定在按钮圆内 */
+  /* 暂停条（圆角 2.5）→ 鼻子左右两半：逐帧烘焙（emphasized 缓动已计入，关键帧间线性）。
+     接缝角点始终落在共同轮廓线上——无折角、无发丝缝；1.95s 两半重叠合成鼻子，硬切为整体路径 */
+  {{MORPH}}
+  @keyframes cursorIn { from { transform: translate(110px, 60px); opacity: 0; } 40% { opacity: 1; } to { transform: translate(0, 0); opacity: 1; } }
+  @keyframes cursorOut{ from { transform: translate(0, 0); opacity: 1; } to { transform: translate(16px, 12px); opacity: 0; } }
+  @keyframes tap      { 0%,100% { transform: scale(1); } 45% { transform: scale(.86); } }
+  @keyframes draw     { from { stroke-dashoffset: 1.02; } to { stroke-dashoffset: 0; } }
+  @keyframes off      { to { opacity: 0; } }
+  @keyframes cut      { from, to { opacity: 0; } }
+  @keyframes on       { from, to { opacity: 1; } }
+  @keyframes hold0    { from, to { opacity: 0; } }
+  @keyframes grow     { from { r: 0px; } to { r: 128px; } }
+  @keyframes center   { from { transform: translateX(256px); } to { transform: translateX(0); } }
+  @keyframes rise     { from { transform: translateY(105%); } to { transform: translateY(0); } }
+  @keyframes track    { from { transform: translateX(calc((var(--i) - 6) * 7px)); opacity: 0; filter: blur(3px); }
+                        to   { transform: none; opacity: 1; filter: blur(0); } }
+  .zh { transform-box: fill-box; }
+
+  .controls { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px;
+              padding: 6px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 6%, transparent);
+              backdrop-filter: blur(20px); }
+  .controls button { font: 500 13px/1 inherit; letter-spacing: .01em; padding: 10px 18px; border: 0; border-radius: 999px;
+                     background: transparent; color: var(--ink); cursor: pointer; transition: background .2s; }
+  .controls button:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); }
+  body.capture .controls { display: none; }
+  body.capture .stage { width: 51vw; }
+  @media (prefers-reduced-motion: reduce) { svg * { animation-duration: .001s !important; animation-delay: 0s !important; } }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 782 256" role="img" aria-label="西几王传媒 XIJIWANG MEDIA">
+  <defs>
+    <clipPath id="zhWindow"><rect x="-10" y="-4" width="500" height="96"/></clipPath>
+    <!-- 圆形展开遮罩，圆心 = 源 SVG 鼻子中心 (131.5,147) -->
+    <clipPath id="grow"><circle id="growC" cx="131.5" cy="147" r="0"/></clipPath>
+  </defs>
+
+  <g class="lockup">
+   <g class="cam">
+    <g class="ink" transform="translate(20 14) scale(.9)">
+      <g class="reveal" clip-path="url(#grow)">
+        <path fill-rule="evenodd" d="{{MANE}}"/>
+        <path d="{{EYES}}"/>
+        <path d="{{MOUTH}}"/>
+      </g>
+      <path class="nose" d="{{NOSE}}"/>
+      <g class="lionAll"><path fill-rule="evenodd" d="{{MANE}}"/><path d="{{EYES}}"/><path d="{{FACE}}"/></g>
+    </g>
+    <!-- 按钮原点 = 鼻子中心 (20+.9×131.5, 14+.9×147) -->
+    <g class="ui" transform="translate(138.35 146.3)">
+      <circle class="ripple" r="58"/>
+      <g class="press">
+        <g class="ringwrap"><g transform="rotate(-90)"><circle class="ring" r="58" pathLength="1"/></g></g>
+        <g class="btn ink">
+          <path class="barL" d="M-11.5 -10.5 Q-11.5 -13 -9 -13 L-6 -13 Q-3.5 -13 -3.5 -10.5 L-3.5 10.5 Q-3.5 13 -6 13 L-9 13 Q-11.5 13 -11.5 10.5 Z"/>
+          <path class="bnose" d="{{NOSE_BTN}}"/>
+          <path class="barR" d="M3.5 -10.5 Q3.5 -13 6 -13 L9 -13 Q11.5 -13 11.5 -10.5 L11.5 10.5 Q11.5 13 9 13 L6 13 Q3.5 13 3.5 10.5 Z"/>
+        </g>
+      </g>
+      <!-- 指针：尖端落在右侧暂停条右下角之外，不遮挡形变 -->
+      <g transform="translate(24 28)">
+        <g class="cursor"><g class="tap">
+          <path transform="scale(1.25)" d="M0 0 L0 17.5 L4.3 13.5 L7.2 20.2 L10 19 L7.1 12.4 L12.8 12.4 Z"
+                fill="#fff" stroke="#111" stroke-width="1.1" stroke-linejoin="round"/>
+        </g></g>
+      </g>
+    </g>
+   </g>
+  </g>
+
+  <g class="ink" transform="translate(274 61)">
+    <g clip-path="url(#zhWindow)">
+{{ZH}}
+    </g>
+    <path class="zhAll" fill-rule="evenodd" d="{{ZHALL}}"/>
+  </g>
+  <g class="ink" transform="translate(274 167.9937)">
+{{EN}}
+    <path class="enAll" fill-rule="evenodd" d="{{ENALL}}"/>
+  </g>
+</svg>
+</div>
+
+<div class="controls">
+  <button id="replay">重播</button>
+  <button id="theme">浅色 / 深色</button>
+</div>
+
+<script>
+  const LIVE = document.getAnimations();
+  const UI = document.querySelector('.ui'), UI_END = 3300, END = 5700;
+  /* “烘焙”：把当前动画值写成静态内联样式并移除动画——不走合成层重采样，
+     画面与静态 SVG 同样锐利；终帧与源文件逐像素一致 */
+  const PROPS = ['transform', 'opacity', 'd', 'r', 'stroke-dashoffset', 'filter'];
+  const TARGETS = [...new Set(LIVE.map(a => a.effect.target))];
+  const clear = () => TARGETS.forEach(e => PROPS.forEach(p => e.style.removeProperty(p)));
+  const bake = () => {
+    const vals = TARGETS.map(e => { const cs = getComputedStyle(e); return PROPS.map(p => cs.getPropertyValue(p)); });
+    LIVE.forEach(a => a.cancel());
+    TARGETS.forEach((e, i) => PROPS.forEach((p, j) => e.style.setProperty(p, vals[i][j])));
+  };
+  // 逐帧导出：seek(毫秒)
+  window.seek = ms => { clear(); LIVE.forEach(a => { a.pause(); a.currentTime = ms; }); bake(); UI.style.display = ms >= UI_END ? 'none' : ''; };
+  // 实时播放：结束后定格
+  let timer; const arm = () => { clearTimeout(timer); timer = setTimeout(() => { bake(); UI.style.display = 'none'; }, END); };
+  const replay = () => { clearTimeout(timer); clear(); UI.style.display = ''; LIVE.forEach(a => { a.cancel(); a.play(); }); arm(); };
+  arm();
+  document.getElementById('replay').onclick = replay;
+  const applyHash = () => document.body.classList.toggle('dark', location.hash === '#dark');
+  document.getElementById('theme').onclick = () => {
+    const d = !document.body.classList.contains('dark');
+    history.replaceState(null, '', d ? '#dark' : location.pathname + location.search);
+    document.body.classList.toggle('dark', d);
+  };
+  window.addEventListener('hashchange', applyHash); applyHash();
+</script>
+</body>
+</html>

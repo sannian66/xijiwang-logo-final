@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>西几王传媒 · XJW 字母形变五官版</title>
+<style>
+  /* 状态变量：0 = 播放，1 = 暂停。分层错开：明度 / 鬃毛 / 标题 */
+  @property --pd { syntax: '<number>'; inherits: true; initial-value: 0; }
+  @property --pb { syntax: '<number>'; inherits: true; initial-value: 0; }
+  @property --pt { syntax: '<number>'; inherits: true; initial-value: 0; }
+  :root { --ink: #000; --bg: #fff;
+    --emph: cubic-bezier(.2,0,0,1); --soft: cubic-bezier(.4,0,.2,1); --spring: cubic-bezier(.34,1.22,.64,1); }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { background: var(--bg); display: grid; place-items: center; font-family: -apple-system, "PingFang SC", system-ui, sans-serif; }
+  .stage { width: min(80vw, 980px); }
+  body.capture .stage { width: 51vw; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  svg * { transform-box: fill-box; transform-origin: center; }
+  svg g[transform] { transform-box: view-box; transform-origin: 0 0; }
+  .ink, .ink * { fill: var(--ink); }
+  .mph { fill: var(--ink); }
+  .feat { opacity: 0; }
+  /* 鬃毛：从中心向外对称推开（圆形遮罩扩张 + 轻微放大），无切口 */
+  .maneIn { transform-box: view-box; transform-origin: 135.2px 125.5px; animation: maneIn .75s cubic-bezier(.3,0,.1,1) 2.2s both; }
+  #revealC { animation: reveal .75s cubic-bezier(.3,0,.1,1) 2.2s both; }
+  .zoom { transform-box: view-box; transform-origin: 135.2px 125.5px; animation: zoomOut .7s var(--emph) 3.15s both; }
+  .pq { opacity: 0; }
+  .maneState { transform-box: view-box; transform-origin: 135.2px 125.5px; transform: scale(calc(1 - var(--pb) * .05)); }
+  .maneBreath { transform-box: view-box; transform-origin: 135.2px 125.5px; }
+  .play { stroke: var(--ink); stroke-width: 4.6; stroke-linejoin: round; fill: var(--ink); }
+  .lockup { transform-box: view-box; animation: center .7s var(--emph) 3.15s both; }
+  .zh { animation: wipe .45s var(--emph) calc(3.5s + var(--i) * .05s) both; }
+  .en { animation: track .5s var(--emph) calc(3.95s + var(--i) * .012s) both; }
+  .uline { stroke: var(--ink); stroke-width: 1.25; transform-origin: 0 50%; animation: grow .45s var(--emph) 4.03s both; }
+  .title { transform-box: view-box; }
+  .ripple { fill: none; stroke: var(--ink); stroke-width: 2; vector-effect: non-scaling-stroke; opacity: 0; transform-box: view-box; transform-origin: 135.2px 125.5px; }
+  .press { transform-box: view-box; transform-origin: 135.2px 125.5px; }
+  .cursor { opacity: 0; transform-box: view-box; transform-origin: 0 0; }
+  .tap { transform-box: view-box; transform-origin: 0 0; }
+  @keyframes maneIn { from { transform: scale(.97); visibility: hidden; } 1% { visibility: visible; } to { transform: none; visibility: visible; } }
+  @keyframes reveal { from { r: 58px; } to { r: 165px; } }
+  @keyframes zoomOut { from { transform: scale(1.3); } to { transform: none; } }
+  @keyframes center { from { transform: translateX(255.8px); } to { transform: none; } }
+  @keyframes wipe { from { clip-path: inset(0 100% 0 0); transform: translateX(calc((var(--i) - 2) * 5px)); } to { clip-path: inset(0 0 0 0); transform: none; } }
+  @keyframes track { from { transform: translateX(calc((var(--i) - 6) * 2.5px)); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .ui { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; gap: 14px; align-items: center; font-size: 13px; color: var(--ink); }
+  .ui span { opacity: .55; }
+  .ui button { font: inherit; padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(0,0,0,.25); background: transparent; color: var(--ink); cursor: pointer; }
+  #emblem { cursor: pointer; }
+  body.capture .ui { display: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 782 256" role="img" aria-label="西几王传媒 XIJIWANG MEDIA">
+  <defs><radialGradient id="rg"><stop offset=".93" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="revealMask" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="256"><circle id="revealC" cx="135.2" cy="125.5" r="170" fill="url(#rg)"/></mask></defs>
+  <g class="lockup"><g class="zoom">
+    <g class="press" id="emblem">
+      <rect x="40" y="36" width="190" height="180" fill="transparent"/>
+      <g class="maneState"><g class="maneBreath" id="maneBreath">
+        <g class="maneIn" mask="url(#revealMask)"><g class="ink" transform="{{LT}}"><path fill-rule="evenodd" d="{{MANE}}"/></g></g>
+      </g></g>
+      <!-- 原始五官（形变结束后替换为精确矢量） -->
+      <g class="ink" transform="{{LT}}">
+        <path class="feat" id="f_x" d="{{CROSS}}"/>
+        <path class="feat" id="f_j" d="{{NOSE}}"/>
+        <path class="feat" id="f_w" d="{{MOUTH}}"/>
+      </g>
+      <circle class="ripple" id="ripple" cx="135.2" cy="125.5" r="98"/>
+      <!-- 播放三角 ▶（精确矢量）/ 形变用双片 -->
+      <g id="playG" style="opacity:0"><g id="playPulse">
+        <g id="pExact" class="ink" transform="translate(-108.1 -107.7) {{LT}}"><path d="{{PLAYEYE}}"/></g>
+        <path class="play pq" id="pL" d="M-10.5 -11.5 L0 -5.75 L0 5.75 L-10.5 11.5 Z"/>
+        <path class="play pq" id="pR" d="M-0.4 -5.75 L10.5 0 L10.5 0 L-0.4 5.75 Z"/>
+      </g></g>
+      <!-- 字母 → 五官 形变层 -->
+      <path class="mph" id="m_x"/><path class="mph" id="m_j"/><path class="mph" id="m_w"/>
+    </g></g>
+    <g transform="translate(116 116)"><g class="cursor" id="cursor"><g class="tap" id="tap">
+      <path transform="scale(1.5)" d="M0 0 L0 17.5 L4.3 13.5 L7.2 20.2 L10 19 L7.1 12.4 L12.8 12.4 Z" fill="#fff" stroke="#111" stroke-width="1.1" stroke-linejoin="round"/>
+    </g></g></g>
+  </g>
+  <g class="title">
+    <g class="ink" transform="translate(274 61)">
+{{ZH}}
+    </g>
+    <g class="ink" transform="translate(274 {{ENY}})">
+{{EN}}
+    </g>
+    <g transform="translate(274 207)"><line class="uline" x1="0" y1="0" x2="468" y2="0"/></g>
+  </g>
+</svg>
+</div>
+<div class="ui"><span>点击图标切换 播放 / 暂停</span><button onclick="location.reload()">重播</button></div>
+<script>
+const root = document.documentElement, $ = id => document.getElementById(id);
+const M = {{MORPH}};
+const N = M.x.L.length / 2;
+function bez(x1, y1, x2, y2) { return x => { if (x <= 0) return 0; if (x >= 1) return 1; let lo = 0, hi = 1, u = .5;
+  for (let i = 0; i < 28; i++) { u = (lo + hi) / 2; const bx = 3*x1*u*(1-u)**2 + 3*x2*u*u*(1-u) + u**3; bx < x ? lo = u : hi = u; }
+  return 3*y1*u*(1-u)**2 + 3*y2*u*u*(1-u) + u**3; }; }
+const EMPH = bez(.2, 0, 0, 1), MORPHE = bez(.45, 0, .15, 1), SPRING = bez(.34, 1.22, .64, 1), SOFT = bez(.4, 0, .2, 1);
+const lerp = (a, b, e) => a + (b - a) * e, cl = x => Math.min(Math.max(x, 0), 1);
+// 每个字母：出现位置 / 出现时刻 / 形变时刻 / 旋转 / 弧线偏移
+const CFG = {
+  x: { ap: .10, ms: 1.20, md: .72, rot: 0,   arc: -60 },
+  j: { ap: .16, ms: 1.42, md: .72, rot: 0,   arc: 0 },
+  w: { ap: .22, ms: 1.48, md: .60, rot: 0,   arc: 22 },
+};
+function letters(t) {
+  for (const k of 'xjw') {
+    const c = CFG[k], d = M[k], el = $('m_' + k), f = $('f_' + k);
+    const a = EMPH(cl((t - c.ap) / .45)), ao = cl((t - c.ap) / .25), e = MORPHE(cl((t - c.ms) / c.md)), es = EMPH(cl((t - c.ms) / (c.md * .7)));
+    if (e >= 1) { el.setAttribute('d', ''); f.style.opacity = 1; continue; }
+    f.style.opacity = 0;
+    if (a <= 0) { el.setAttribute('d', ''); continue; }
+    // 出现：品牌字形，原位轻微放大 + 快速显影（作为一个词）
+    const sx = d.p[0], sy = d.p[1];
+    const cx = lerp(sx, d.tc[0], e), cy = lerp(sy, d.tc[1], e) + c.arc * Math.sin(Math.PI * e);
+    const th = c.rot * Math.sin(Math.PI * e) * Math.PI / 180, co = Math.cos(th), si = Math.sin(th);
+    const s0 = lerp(.94, 1, a);
+    let p = '';
+    for (let i = 0; i < N; i++) {
+      const lx = lerp(d.L[2*i] * s0, d.T[2*i], es), ly = lerp(d.L[2*i+1] * s0, d.T[2*i+1], es);
+      const x = cx + lx * co - ly * si, y = cy + lx * si + ly * co;
+      p += (i ? 'L' : 'M') + x.toFixed(2) + ' ' + y.toFixed(2);
+    }
+    el.setAttribute('d', p + 'Z'); el.style.opacity = ao;
+  }
+}
+// ▶ 从字母组合中心放大弹出 → 落到左眼
+// ▶ 像按下播放键一样从左侧压入左眼位置（1.2s），随后字母开始形变
+// X 让位后，▶ 在左眼位置“按下”出现（1.72s）：先放大到位，再轻压一下
+const EYE = [108.1, 107.7], PT = 1.72;
+function playIntro(t) {
+  const g = $('playG');
+  if (t < PT) { g.style.opacity = 0; return; }
+  const b = EMPH(cl((t - PT) / .38));
+  const x = EYE[0], y = EYE[1];
+  const s = lerp(.6, 1, b) * (1 - .07 * Math.sin(Math.PI * cl((t - PT - .3) / .22)));
+  g.style.opacity = 1;
+  g.setAttribute('transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${Math.max(s, .001).toFixed(4)})`);
+}
+// 播放态：鬃毛缓慢呼吸；暂停时停住
+let idleT = 0, lastT = null;
+function idle(ms) {
+  const t = ms / 1000;
+  letters(t); playIntro(t);
+  if (lastT === null) lastT = ms; const dt = Math.max(0, ms - lastT) / 1000; lastT = ms;
+  const pb = parseFloat(getComputedStyle(root).getPropertyValue('--pb')) || 0;
+  idleT += dt * (1 - pb) * SOFT(cl((t - 4.65) / 1.0));
+  $('maneBreath').style.transform = `scale(${1 + Math.sin(idleT * 2 * Math.PI / 3.2) * .014 * (1 - pb)})`;
+}
+const TRI = ['path("M-10.5 -11.5 L0 -5.75 L0 5.75 L-10.5 11.5 Z")', 'path("M-0.4 -5.75 L10.5 0 L10.5 0 L-0.4 5.75 Z")'];
+const BAR = ['path("M-10.5 -11.5 L-5.5 -11.5 L-5.5 11.5 L-10.5 11.5 Z")', 'path("M5.5 -11.5 L10.5 -11.5 L10.5 11.5 L5.5 11.5 Z")'];
+const E = 'cubic-bezier(.2,0,0,1)';
+let playing = true;
+function toggle(delay = 0) {
+  const toPause = playing; playing = !playing; const v = toPause ? [0, 1] : [1, 0];
+  const f = (d, dur) => ({ delay: delay + d, duration: dur, easing: E, fill: 'forwards' });
+  ['pL', 'pR'].forEach((id, i) => $(id).animate({ d: toPause ? [TRI[i], BAR[i]] : [BAR[i], TRI[i]] }, f(0, 380)));
+  // 精确矢量 ▶ 与形变双片交接：暂停瞬间切到双片；回到播放时形变结束再切回精确 ▶
+  // 先显示新的一层，再隐藏旧的一层（相隔 1 帧），避免交叉淡化时墨色变浅
+  const sw = toPause ? 0 : 380, snap = d => ({ delay: delay + d, duration: 1, fill: 'forwards' });
+  if (toPause) {
+    ['pL', 'pR'].forEach(id => $(id).animate({ opacity: [1, 1] }, snap(0)));
+    $('pExact').animate({ opacity: [0, 0] }, snap(17));
+  } else {
+    $('pExact').animate({ opacity: [1, 1] }, snap(sw));
+    ['pL', 'pR'].forEach(id => $(id).animate({ opacity: [0, 0] }, snap(sw + 17)));
+  }
+  $('emblem').animate([{ transform: 'scale(1)' }, { transform: 'scale(.96)', offset: .35 }, { transform: 'scale(1.005)', offset: .75 }, { transform: 'scale(1)' }],
+                      { delay, duration: 440, easing: 'ease-out' });
+  $('playPulse').animate([{ transform: 'scale(1)' }, { transform: 'scale(1.3)', offset: .4 }, { transform: 'scale(1)' }],
+                         { delay, duration: 500, easing: 'cubic-bezier(.34,1.2,.64,1)' });
+  $('ripple').animate([{ transform: 'scale(1)', opacity: .12 }, { transform: 'scale(1.22)', opacity: 0 }],
+                      { delay, duration: 820, easing: 'cubic-bezier(.05,.7,.1,1)' });
+  root.animate({ '--pd': v }, f(0, 520));
+  root.animate({ '--pb': v }, f(70, 700));
+  root.animate({ '--pt': v }, f(180, 620));
+}
+let seeking = false;
+(function loop() { if (!seeking) idle(document.timeline.currentTime); requestAnimationFrame(loop); })();
+$('emblem').addEventListener('click', () => { if (document.timeline.currentTime > 4000) toggle(); });
+if (location.hash.includes('demo')) {
+  const T = [6500, 8700, 10700, 12700];
+  $('cursor').animate([{ opacity: 0, transform: 'translate(70px,50px)' }, { opacity: 1, transform: 'none' }], { delay: 5400, duration: 700, easing: E, fill: 'forwards' });
+  T.forEach(t => { $('tap').animate([{ transform: 'scale(1)' }, { transform: 'scale(.82)', offset: .45 }, { transform: 'scale(1)' }], { delay: t - 120, duration: 260, easing: 'ease-in-out' }); toggle(t); });
+  $('cursor').animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translate(40px,30px)' }], { delay: 13400, duration: 500, easing: 'ease-in', fill: 'forwards' });
+}
+window.seek = ms => { seeking = true; document.getAnimations().forEach(a => { a.pause(); a.currentTime = ms; }); idle(ms); };
+</script>
+</body>
+</html>

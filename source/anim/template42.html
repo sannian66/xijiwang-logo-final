@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>西几王传媒 · 光圈睁眼交互版</title>
+<style>
+  /* 状态变量：0 = 播放，1 = 暂停。分层错开：明度 / 叶片 / 眼睛 / 标题 */
+  @property --pd { syntax: '<number>'; inherits: true; initial-value: 0; }
+  @property --pb { syntax: '<number>'; inherits: true; initial-value: 0; }
+  @property --pe { syntax: '<number>'; inherits: true; initial-value: 0; }
+  @property --pt { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+  :root {
+    --ink: #202624; --bg: #ffffff;
+    --emph:  cubic-bezier(.2, 0, 0, 1);
+    --decel: cubic-bezier(.05, .7, .1, 1);
+    --soft:  cubic-bezier(.4, 0, .2, 1);
+    --spring: cubic-bezier(.34, 1.32, .64, 1);   /* 轻微回弹，幅度克制 */
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { background: var(--bg); display: grid; place-items: center;
+         font-family: -apple-system, "PingFang SC", "Google Sans", system-ui, sans-serif; }
+  body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
+                background: var(--ink); opacity: 0; }   /* 暂停：整体压暗一档 */
+  .stage { width: min(80vw, 980px); }
+  body.capture .stage { width: 51vw; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  svg * { transform-box: fill-box; transform-origin: center; }
+  svg g[transform] { transform-box: view-box; transform-origin: 0 0; }
+  .ink { fill: var(--ink); }
+
+  /* 0 · 墨点呼吸 */
+  .dot { animation: dotBreath .4s var(--decel) .05s both, dotOut .25s var(--soft) .45s forwards; }
+  /* 1 · 光圈叶片旋转张开 */
+  .spin, .bladeIntro { transform-box: view-box; transform-origin: 128px 123.75px; }
+  .bladeIntro { animation: bladeIn .9s var(--emph) calc(.42s + var(--k) * .006s) both; }
+  .bladeState { transform-box: view-box; }
+  /* 光圈刀片缝：开场闭合时可见，暂停时重新浮现 */
+  .seams { fill: none; stroke: var(--bg); stroke-width: 1.5; stroke-linecap: round; }
+  .seamsIntro { opacity: 0; transform-box: view-box; transform-origin: 128px 123.75px;
+                animation: seamIn .3s var(--soft) .95s both, seamTurn .55s var(--emph) 1.1s both, fadeOut .3s var(--soft) 1.45s forwards; }
+  .seamsState { transform-box: view-box; transform-origin: 128px 123.75px;
+                opacity: calc(var(--pb) * .95); transform: rotate(calc(var(--pb) * -16deg)); }
+  /* 光圈开口 = 狮子脸：开场由中心旋开，暂停时向内收拢 */
+  .faceState { transform-box: view-box; transform-origin: 128px 133px; transform: scale(calc(1 - var(--pb) * .14)) rotate(0deg); }
+  .faceIntro { transform-box: view-box; transform-origin: 128px 123.75px; animation: irisOpen .62s var(--emph) 1.08s both; }
+  .feat { transform-box: view-box; transform-origin: 128px 133px; transform: scale(calc(1 - var(--pb) * .12)); }
+  .outline { display: none; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 1;
+             animation: draw .95s var(--soft) .45s both, fadeOut .35s var(--soft) 1.3s both; }
+  .face { fill: var(--bg); }
+  /* 2 · 鼻子 → 眼睛 → 嘴 */
+  .noseIntro { transform-box: view-box; transform-origin: 0 0; animation: noseDrop .5s var(--decel) 1.36s both; }
+  .nosePulse { transform-box: view-box; transform-origin: 0 0; }
+  .nose { stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
+  .eyeState { transform-origin: 50% 100%; transform: translateY(calc(var(--pe) * 2px)) scaleY(calc(1 - var(--pe) * .5)); }
+  .eye { transform-origin: 50% 100%; }
+  .eyeL { animation: eyeIn .4s var(--decel) 1.56s both; }
+  .eyeR { animation: eyeIn .4s var(--decel) 1.62s both; }
+  .mouth { transform-origin: 50% 0; animation: mouthIn .45s var(--decel) 1.74s both; }
+  /* 3 · 归位 + 中文擦除 */
+  .lockup { transform-box: view-box; animation: center .8s var(--emph) 2.2s both; }
+  .zh { animation: wipe .6s var(--emph) calc(2.58s + var(--i) * .06s) both; }
+  /* 4 · 英文收字距 + 细线 */
+  .en { animation: track .6s var(--emph) calc(3.0s + var(--i) * .02s) both; }
+  .uline { stroke: var(--ink); stroke-opacity: .2; stroke-width: 1.2; transform-origin: 0 50%; animation: grow .5s var(--emph) 3.12s both; }
+  /* 播放进度条：播放时前进，暂停时停住 */
+  .prog { stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; animation: fadeIn .2s linear 3.45s both; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .head { fill: var(--ink); transform-box: fill-box; transform-origin: center; animation: pop .35s var(--decel) 3.45s both; }
+  /* 5 · 外轮廓高光 + 下沉稳住 */
+  .rim { display: none; fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: .16 .84;
+         animation: rim .4s var(--soft) 3.6s both; }
+  .sink { transform-box: view-box; animation: sink .45s var(--soft) 3.62s both; }
+  /* 暂停：标题退后半级 */
+  .title { transform-box: view-box; transform-origin: 274px 128px;
+           opacity: calc(1 - var(--pt) * .2);
+           transform: translateX(calc(var(--pt) * -3px)) scale(calc(1 - var(--pt) * .025)); }
+  .ripple { fill: var(--ink); opacity: 0; transform-box: view-box; transform-origin: 0 0; }
+  .press  { transform-box: view-box; transform-origin: 128px 123.75px; }
+  .cursor { opacity: 0; transform-box: view-box; transform-origin: 0 0; }
+  .tap    { transform-box: view-box; transform-origin: 0 0; }
+
+  @keyframes dotBreath { from { transform: scale(0); } to { transform: scale(1); } }
+  @keyframes dotOut    { from { transform: scale(1); opacity: 1; } to { transform: scale(.6); opacity: 0; } }
+  @keyframes bladeIn   { 0% { transform: rotate(-80deg) scale(.06); opacity: 0; } 8% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+  @keyframes draw      { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes fadeOut   { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes pop       { from { transform: scale(0); } to { transform: scale(1); } }
+  @keyframes noseDrop  { from { transform: translateY(-4px) scale(1.25); opacity: 0; } 40% { opacity: 1; } to { transform: none; opacity: 1; } }
+  @keyframes irisOpen  { from { transform: scale(.35) rotate(-30deg); clip-path: view-box circle(0px at 128px 123.75px); } to { transform: none; clip-path: view-box circle(120px at 128px 123.75px); } }
+  @keyframes seamIn    { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes seamTurn  { from { transform: none; } to { transform: rotate(28deg); } }
+  @keyframes eyeIn     { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes mouthIn   { from { transform: scale(.55, .1); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes center    { from { transform: translateX(256px); } to { transform: none; } }
+  @keyframes wipe      { from { clip-path: inset(0 100% 0 0); transform: translateX(calc((var(--i) - 2) * 5px)); }
+                         to   { clip-path: inset(0 0 0 0);    transform: none; } }
+  @keyframes track     { from { transform: translateX(calc((var(--i) - 6) * 6px)); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes grow      { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes rim       { 0% { stroke-dashoffset: .16; opacity: 0; } 15%, 80% { opacity: .95; } 100% { stroke-dashoffset: -1; opacity: 0; } }
+  @keyframes sink      { 0% { transform: none; } 45% { transform: translateY(3px); } 100% { transform: none; } }
+
+  .ui { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; gap: 14px; align-items: center;
+        font-size: 13px; color: var(--ink); }
+  .ui span { opacity: .55; }
+  .ui button { font: inherit; padding: 9px 18px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+               background: transparent; color: var(--ink); cursor: pointer; }
+  #emblem { cursor: pointer; }
+  body.capture .ui { display: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 782 256" role="img" aria-label="西几王传媒 XIJIWANG MEDIA">
+  <defs>{{CLIPS}}</defs>
+  <g class="sink">
+    <g class="lockup">
+      <g class="press" id="emblem">
+        <g class="ink" transform="translate(20 14) scale(.9)">
+          <g class="spin" id="spin">
+{{BLADES}}
+            <g class="seams seamsIntro">{{SEAMS}}</g>
+            <g class="seams seamsState">{{SEAMS}}</g>
+            <path class="outline" pathLength="1" d="{{OUTER}}"/>
+            <path class="rim" pathLength="1" d="{{OUTER}}"/>
+          </g>
+          <g class="faceState"><g class="faceIntro"><path class="face" d="{{FACE}}"/></g></g>
+          <circle class="dot" cx="128" cy="123.75" r="7"/>
+          <g class="feat">
+          <g class="eyeState"><path class="eye eyeL" d="{{EYEL}}"/></g>
+          <g class="eyeState"><path class="eye eyeR" d="{{EYER}}"/></g>
+          <path class="mouth" d="{{MOUTH}}"/>
+          <g transform="translate(130.25 147)">
+            <circle class="ripple" id="ripple" r="62"/>
+            <g class="noseIntro"><g class="nosePulse" id="nosePulse">
+              <path class="nose" id="noseL" d="M-11.3 -11.3 L0 -5.65 L0 5.65 L-11.3 11.3 Z"/>
+              <path class="nose" id="noseR" d="M-0.4 -5.65 L11.3 0 L11.3 0 L-0.4 5.65 Z"/>
+            </g></g>
+          </g>
+          </g>
+        </g>
+      </g>
+      <!-- 演示用鼠标指针（仅 #demo） -->
+      <g transform="translate(147 157)"><g class="cursor" id="cursor"><g class="tap" id="tap">
+        <path transform="scale(1.25)" d="M0 0 L0 17.5 L4.3 13.5 L7.2 20.2 L10 19 L7.1 12.4 L12.8 12.4 Z" fill="#fff" stroke="#111" stroke-width="1.1" stroke-linejoin="round"/>
+      </g></g></g>
+    </g>
+    <g class="title">
+      <g class="ink" transform="translate(274 61)">
+{{ZH}}
+      </g>
+      <g class="ink" transform="translate(274 167.9937)">
+{{EN}}
+      </g>
+      <g transform="translate(274 207)"><line class="uline" x1="0" y1="0" x2="468" y2="0"/>
+        <line class="prog" id="prog" x1="0" y1="0" x2="0" y2="0"/><circle class="head" id="head" cx="0" cy="0" r="3"/></g>
+    </g>
+  </g>
+</svg>
+</div>
+<div class="ui"><span>点击徽章切换 播放 / 暂停</span><button onclick="location.reload()">重播</button></div>
+
+<script>
+const root = document.documentElement;
+const $ = id => document.getElementById(id);
+const TRI = ['path("M-11.3 -11.3 L0 -5.65 L0 5.65 L-11.3 11.3 Z")', 'path("M-0.4 -5.65 L11.3 0 L11.3 0 L-0.4 5.65 Z")'];
+const BAR = ['path("M-10 -12 L-3.5 -12 L-3.5 12 L-10 12 Z")',   'path("M3.5 -12 L10 -12 L10 12 L3.5 12 Z")'];
+const EMPH = 'cubic-bezier(.2,0,0,1)';
+let playing = true;
+
+// 切换：鼻子变形 → 按压回弹 + 涟漪 → 明度 / 叶片 / 眼睛 / 标题 依次错开
+function toggle(delay = 0) {
+  const toPause = playing; playing = !playing;
+  const v = toPause ? [0, 1] : [1, 0];
+  const f = (d, dur, ease = EMPH) => ({ delay: delay + d, duration: dur, easing: ease, fill: 'forwards' });
+  ['noseL', 'noseR'].forEach((id, i) =>
+    $(id).animate({ d: toPause ? [TRI[i], BAR[i]] : [BAR[i], TRI[i]] }, f(0, 380)));
+  $('emblem').animate([{ transform: 'scale(1)' }, { transform: 'scale(.955)', offset: .35 },
+                       { transform: 'scale(1)' }],
+                      { delay, duration: 440, easing: 'ease-out' });
+  $('nosePulse').animate([{ transform: 'scale(1)' }, { transform: 'scale(1.12)', offset: .4 }, { transform: 'scale(1)' }],
+                         { delay, duration: 520, easing: EMPH });
+  $('ripple').animate([{ transform: 'scale(.15)', opacity: .05 }, { transform: 'scale(1.35)', opacity: 0 }],
+                      { delay, duration: 820, easing: 'cubic-bezier(.05,.7,.1,1)' });
+  root.animate({ '--pd': v }, f(0, 520));
+  root.animate({ '--pb': v }, f(60, 760));
+  root.animate({ '--pe': v }, f(130, 520));
+  root.animate({ '--pt': v }, f(190, 620));
+}
+
+// 播放态：叶片缓慢匀速旋转 + 呼吸；暂停时随 --pb 减速停转
+let idleT = 0, lastT = null;
+const smooth = x => { x = Math.min(Math.max(x, 0), 1); return x * x * (3 - 2 * x); };
+function idle(t) {
+  if (lastT === null) lastT = t;
+  const dt = Math.max(0, t - lastT) / 1000; lastT = t;
+  const pb = parseFloat(getComputedStyle(root).getPropertyValue('--pb')) || 0;
+  idleT += dt * (1 - pb) * smooth((t / 1000 - 4.6) / 1.2);
+  const x = (idleT * 40) % 468;
+  $('prog').setAttribute('x2', x.toFixed(2)); $('head').setAttribute('cx', x.toFixed(2));
+  const amp = (1 - pb) * smooth((t / 1000 - 4.6) / 1.2) * (location.hash.includes('demo') ? 1 - smooth((t / 1000 - 12.9) / .6) : 1);
+  $('spin').style.transform = `rotate(${Math.sin(idleT * 2 * Math.PI / 3.6) * 7 * amp}deg)`;
+}
+let seeking = false;
+(function loop() { if (!seeking) idle(document.timeline.currentTime); requestAnimationFrame(loop); })();
+
+$('emblem').addEventListener('click', () => { if (document.timeline.currentTime > 4000) toggle(); });
+
+// 演示模式：#demo 自动按时间点切换，并显示鼠标点击
+if (location.hash.includes('demo')) {
+  const T = [6000, 8200, 10200, 12200];
+  // 光标平时停在右下鬃毛外侧，点击前 350ms 移入、点完 250ms 后退开，不遮挡 ▶/❚❚ 与嘴
+  const REST = 'translate(46px,40px)';
+  $('cursor').animate([{ opacity: 0, transform: 'translate(90px,70px)' }, { opacity: 1, transform: REST }],
+                      { delay: 5000, duration: 700, easing: EMPH, fill: 'forwards' });
+  T.forEach(t => {
+    $('cursor').animate([{ transform: REST }, { transform: 'translate(-1px,-10px)' }], { delay: t - 520, duration: 360, easing: EMPH, fill: 'forwards' });
+    $('cursor').animate([{ transform: 'translate(-1px,-10px)' }, { transform: REST }], { delay: t + 260, duration: 420, easing: EMPH, fill: 'forwards' });
+    $('tap').animate([{ transform: 'scale(1)' }, { transform: 'scale(.82)', offset: .45 }, { transform: 'scale(1)' }],
+                     { delay: t - 120, duration: 260, easing: 'ease-in-out' });
+    toggle(t);
+  });
+  $('cursor').animate([{ opacity: 1, transform: REST }, { opacity: 0, transform: 'translate(80px,64px)' }],
+                      { delay: 12900, duration: 500, easing: 'ease-in', fill: 'forwards' });
+}
+// 逐帧导出：seek(毫秒)，需按时间顺序调用
+window.seek = ms => { seeking = true; document.getAnimations().forEach(a => { a.pause(); a.currentTime = ms; }); idle(ms); };
+</script>
+</body>
+</html>
